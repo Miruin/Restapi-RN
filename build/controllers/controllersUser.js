@@ -24,27 +24,27 @@ class Controllersuser {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const pool = yield (0, connection_1.getcon)();
-                let { nick, email, contrasena, nombre, apellido, descripcion } = req.body;
-                if (!nick || !email || !contrasena || !nombre || !apellido) {
+                let { Username, Email, Password, Name, Lastname, descripcion } = req.body;
+                if (!Username || !Email || !Password || !Name || !Lastname) {
                     return res.status(400).json({ msg: 'No se han llenado los valores correctamente' });
                 }
                 else {
-                    const result = yield (0, connection_1.getdatosuser)(pool, nick);
+                    const result = yield (0, connection_1.getdatosuser)(pool, Username);
                     if (result.recordset[0]) {
                         pool.close();
                         return res.status(400).send({ msg: 'Ya se esta usando este usuario' });
                     }
                     else {
                         if (!descripcion)
-                            descripcion = 'Soy ' + nombre + ' ' + apellido;
+                            descripcion = 'Soy ' + Name + ' ' + Lastname;
                         let rondas = 10;
-                        let pwh = yield bcryptjs_1.default.hash(contrasena, rondas);
+                        let pwh = yield bcryptjs_1.default.hash(Password, rondas);
                         yield pool.request()
-                            .input('nick', mssql_1.default.VarChar, nick)
-                            .input('email', mssql_1.default.VarChar, email)
+                            .input('nick', mssql_1.default.VarChar, Username)
+                            .input('email', mssql_1.default.VarChar, Email)
                             .input('pw', mssql_1.default.VarChar, pwh)
-                            .input('nombre', mssql_1.default.VarChar, nombre)
-                            .input('apellido', mssql_1.default.VarChar, apellido)
+                            .input('nombre', mssql_1.default.VarChar, Name)
+                            .input('apellido', mssql_1.default.VarChar, Lastname)
                             .input('descripcion', mssql_1.default.VarChar, descripcion)
                             .query(String(config_1.default.q1));
                         pool.close();
@@ -62,17 +62,17 @@ class Controllersuser {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const pool = yield (0, connection_1.getcon)();
-                let { nick, contrasena } = req.body;
-                if (!nick || !contrasena) {
+                let { Username, Password } = req.body;
+                if (!Username || !Password) {
                     return res.status(400).send({ msg: 'No se han llenado los valores correctamente' });
                 }
                 else {
-                    const result = yield (0, connection_1.getdatosuser)(pool, nick);
+                    const result = yield (0, connection_1.getdatosuser)(pool, Username);
                     if (result.recordset[0]) {
-                        const pwv = yield bcryptjs_1.default.compare(contrasena, result.recordset[0].pw_usuario);
+                        const pwv = yield bcryptjs_1.default.compare(Password, result.recordset[0].pw_usuario);
                         if (pwv) {
                             pool.close();
-                            return res.status(200).send({ token: (0, service_1.creartoken)(nick), msg: 'Se ha iniciado secion satisfactoriamente', nickname: nick });
+                            return res.status(200).send({ token: (0, service_1.creartoken)(Username), msg: 'Se ha iniciado secion satisfactoriamente', nickname: Username });
                         }
                         else {
                             pool.close();

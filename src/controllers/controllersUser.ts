@@ -17,15 +17,15 @@ class Controllersuser {
 
             const pool = await getcon();
 
-            let { nick, email, contrasena, nombre, apellido, descripcion } = req.body;
+            let { Username, Email, Password, Name, Lastname, descripcion } = req.body;
             
-            if(!nick || !email || !contrasena || !nombre || !apellido) {
+            if(!Username || !Email || !Password || !Name || !Lastname) {
     
                 return res.status(400).json({ msg : 'No se han llenado los valores correctamente'});
     
             } else {
 
-                const result = await getdatosuser(pool, nick);
+                const result = await getdatosuser(pool, Username);
 
                 if (result.recordset[0]) { 
                         
@@ -34,16 +34,16 @@ class Controllersuser {
 
                 } else {
 
-                    if(!descripcion) descripcion = 'Soy '+nombre+' '+apellido;
+                    if(!descripcion) descripcion = 'Soy '+Name+' '+Lastname;
 
                     let rondas = 10;
-                    let pwh = await bcryptjs.hash(contrasena,rondas);
+                    let pwh = await bcryptjs.hash(Password, rondas);
                     await pool.request()
-                    .input('nick', sql.VarChar, nick)
-                    .input('email', sql.VarChar, email)
+                    .input('nick', sql.VarChar, Username)
+                    .input('email', sql.VarChar, Email)
                     .input('pw', sql.VarChar, pwh)
-                    .input('nombre', sql.VarChar, nombre)
-                    .input('apellido', sql.VarChar, apellido)
+                    .input('nombre', sql.VarChar, Name)
+                    .input('apellido', sql.VarChar, Lastname)
                     .input('descripcion', sql.VarChar, descripcion)
                     .query(String(config.q1));
 
@@ -69,24 +69,24 @@ class Controllersuser {
     
             const pool = await getcon();
     
-            let { nick, contrasena} = req.body;
+            let { Username, Password} = req.body;
     
-            if (!nick || !contrasena) {
+            if (!Username || !Password) {
     
                 return res.status(400).send({ msg : 'No se han llenado los valores correctamente'});
                 
             } else {
                 
-                const result = await getdatosuser(pool, nick);
+                const result = await getdatosuser(pool, Username);
     
                 if (result.recordset[0]) {
     
-                    const pwv = await bcryptjs.compare(contrasena, result.recordset[0].pw_usuario);
+                    const pwv = await bcryptjs.compare(Password, result.recordset[0].pw_usuario);
     
                     if (pwv) {
     
                         pool.close();
-                        return res.status(200).send({token: creartoken(nick), msg: 'Se ha iniciado secion satisfactoriamente', nickname: nick});
+                        return res.status(200).send({token: creartoken(Username), msg: 'Se ha iniciado secion satisfactoriamente', nickname: Username});
                         
                     } else {
 
