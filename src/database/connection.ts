@@ -1,4 +1,3 @@
-import { Response } from 'express';
 import sql from 'mssql';
 import config from '../config/config';
 

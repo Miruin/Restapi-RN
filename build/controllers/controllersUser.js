@@ -113,7 +113,6 @@ class Controllersuser {
             let { nick, email, na, fn} = req.body;
     
             const pool = await getcon();
-
             const result = await getdatosuser(pool, String(req.user));
     
             if (nick == result.recordset[0].nick_usuario && email == result.recordset[0].email_usuario &&
@@ -138,7 +137,6 @@ class Controllersuser {
                     
                     pool.close();
                     return res.status(200).send({msg: 'Se ha actualizado satisfactoriamente'});
-
                 } else {
     
                     await pool.request()
@@ -148,7 +146,6 @@ class Controllersuser {
                     .input('fn', sql.VarChar, fn)
                     .input('nickname', req.user)
                     .query(String(config.q4));
-
                     pool.close();
                     return res.status(200).send({token: creartoken(nick), msg: 'Se ha actualizado satisfactoriamente'});
                     

@@ -2,7 +2,6 @@ import express from 'express'
 import ru from './routes/routeuser';
 import config from './config/config';
 import cors from 'cors'
-import rutam from './routes/routemanga'
 
 class server {
 
@@ -32,7 +31,6 @@ class server {
     routes() {
 
         this.app.use(ru);
-        this.app.use(rutam);
 
     }
     
